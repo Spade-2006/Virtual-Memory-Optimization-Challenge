@@ -1,208 +1,144 @@
-📘 Virtual Memory Optimization Challenge
-A complete simulator for Paging, Segmentation, Page Faults & Demand Paging (CLI-based + Analytics)
-📌 Overview
+# 📘 Virtual Memory Optimization Challenge
 
-This project is a fully deterministic, test-driven virtual memory simulator built for Operating Systems labs and academic demonstrations.
-It models how an OS handles:
+### A complete simulator for Paging, Segmentation, Page Faults & Demand Paging (CLI-based + Analytics)
 
-Paging
+## 📌 Overview
 
-Segmentation
+This project is a deterministic, test-driven virtual memory simulator built for Operating Systems labs and academic demonstrations. It models how an OS handles Paging, Segmentation, Segmented-Paging, Page Faults, and Demand Paging. It includes Page Replacement Algorithms (FIFO, LRU, Optimal, Clock). All memory operations generate structured JSON events in `events.log`, allowing students and instructors to replay, visualize, and analyze OS memory behavior step-by-step.
 
-Segmented-Paging
+**The repository includes:**
 
-Page faults
+  * A complete paging engine
+  * A segmentation engine with allocator
+  * A global page registry
+  * A demand paging controller
+  * Offline analytics (FIFO vs LRU vs Optimal)
+  * CLI demo runner
+  * Minimal Streamlit visualizer
 
-Demand paging
+## 🚀 Features
 
-Page replacement algorithms (FIFO, LRU, Optimal, Clock)
+**🔹 Paging Simulation**
 
-All memory operations generate structured JSON events in events.log, allowing instructors and students to replay, visualize, and analyze internal OS behaviors step-by-step.
+  * Virtual → physical page translation
+  * Page Table Entries: present, dirty, referenced, frame
+  * Deterministic page faults
+  * Demand paging
+  * Replacement algorithms: FIFO / LRU / CLOCK
 
-The repository includes:
+**🔹 Segmentation**
 
-A complete paging engine
+  * Base–limit checks
+  * Segment allocation: First Fit / Best Fit / Worst Fit
+  * Segmentation faults
+  * Segmented + Paging mode
+  * Global page ID mapping per (pid, segment, page)
 
-A segmentation engine with allocator
+**🔹 Demand Paging Controller**
 
-A global page registry
+  * Simulated disk latency
+  * Prevents duplicate page loads
+  * Handles: `page_load_request`, `page_in`, `page_out`
+  * Tight integration with PagingEngine
 
-A demand paging controller
+**🔹 Event Logging (JSON-lines)**
+Every major step logs a structured event to `events.log` (e.g., `page_fault`, `page_in`, `page_out`, `segment_alloc`, `tlb_hit`, `access_request`). These logs let students inspect memory evolution frame-by-frame.
 
-Offline analytics (FIFO vs LRU vs Optimal)
+**🔹 Analytics Dashboard (CLI)**
+Located in `Combined_Demo_Tool/analytics.py`:
 
-CLI demo runner
+  * Offline page fault comparison: FIFO vs LRU vs Optimal
+  * Exports results to `analytics.csv`
+  * Pre-built sample traces: locality, sequential, mixed
 
-Minimal Streamlit visualizer
+**🔹 Minimal Streamlit Visualizer (Optional)**
+Displays last N events and event count table. Run with: `streamlit run Combined_Demo_Tool/visualizer_streamlit.py`
 
-Sample traces
+## 🧩 System Architecture
 
-🚀 Features
-🔹 Paging Simulation
-
-Virtual → physical page translation
-
-Page Table Entries: present, dirty, referenced, frame
-
-Deterministic page faults
-
-Demand paging support
-
-FIFO / LRU / CLOCK replacement
-
-🔹 Segmentation
-
-Base–limit checks
-
-Segment allocation via: First Fit / Best Fit / Worst Fit
-
-Segmentation faults
-
-Segmented + Paging mode
-
-Global page ID mapping per (pid, segment, page)
-
-🔹 Demand Paging Controller
-
-Simulated disk latency
-
-Prevents duplicate page loads
-
-Handles page_load_request, page_in, page_out
-
-Integrates tightly with PagingEngine
-
-🔹 Event Logging (JSON-lines)
-
-Every major step logs a structured event to events.log:
-
-page_fault, page_in, page_out,
-segment_alloc, seg_translate,
-tlb_hit, tlb_miss,
-access_request, demand_page_loaded, analytics_summary
-
-
-This lets students inspect memory evolution frame-by-frame.
-
-🔹 Analytics Dashboard (CLI)
-
-Located in Combined_Demo_Tool/analytics.py
-
-Offline page fault comparison: FIFO vs LRU vs Optimal
-
-Exports results to analytics.csv
-
-Pre-built sample traces (locality, sequential, mixed)
-
-🔹 Minimal Streamlit Visualizer (Optional)
-
-Shows:
-
-Last N events in real time
-
-Simple event count table
-Run with:
-
-streamlit run Combined_Demo_Tool/visualizer_streamlit.py
-
-🧩 System Architecture
+```text
 Virtual Memory Optimization Challenge/
 │
-├── Module_1_Paging_Engine        → Paging, frames, replacement algorithms, TLB
-├── Module_2_Segmentation_DemandPaging → Segmentation, allocator, registry, demand paging
-├── Combined_Demo_Tool            → Demo runner, traces, analytics, visualizer
-├── docs                          → Reports, diagrams (your project docs)
-└── events.log                    → Auto-generated at runtime
+├── Module_1_Paging_Engine
+│   → Paging, frames, replacement algorithms, TLB
+│
+├── Module_2_Segmentation_DemandPaging
+│   → Segmentation, allocator, registry, demand paging
+│
+├── Combined_Demo_Tool
+│   → Demo runner, traces, analytics, visualizer
+│
+├── docs
+│   → Reports, diagrams
+│
+└── events.log
+    → Auto-generated at runtime
+```
 
+**Core Workflow:**
+Trace CSV → SegmentationEngine translates segment offset → Virtual page ID generated → DemandController requests the page → PagingEngine loads/evicts frames → Event logged to `events.log`
 
-Core workflow:
+## 📥 Installation
 
-Trace CSV
-→ SegmentationEngine translates segment offset
-→ virtual page ID produced
-→ DemandController requests the page
-→ PagingEngine loads/evicts pages
-→ events logged to events.log
+**Backend Setup**
 
-📥 Installation
-Backend
+```bash
 python -m venv .venv
-.venv\Scripts\activate     # Windows
+.venv\Scripts\activate    # Windows
 pip install -r requirements.txt
+```
 
-Run Demo
+**Run Demo**
+
+```bash
 python Combined_Demo_Tool/run_demo.py Combined_Demo_Tool/traces/locality.csv
+```
 
-Run Analytics
+**Run Analytics**
+
+```bash
 python Combined_Demo_Tool/analytics.py Combined_Demo_Tool/traces/locality.csv
+```
 
-Visualizer (optional)
+**Run Visualizer (optional)**
+
+```bash
 streamlit run Combined_Demo_Tool/visualizer_streamlit.py
+```
 
-Run Tests
+**Run Tests**
+
+```bash
 pytest -q
+```
 
-▶️ Usage
+## ▶️ Usage
 
-Choose a sample trace (locality.csv, sequential.csv, mixed_multi.csv).
+1.  Choose a sample trace (`locality.csv`, `sequential.csv`, `mixed_multi.csv`).
+2.  Run `run_demo.py` with the trace path.
+3.  The demo creates 32KB segments for each PID, translates segment offsets into global pages, uses demand paging, and employs LRU replacement by default.
+4.  Inspect `events.log` to study: `page_fault`, `page_in`, `segment_alloc`, `tlb_hit`, `segmentation faults`.
+5.  Run `analytics.py` to generate page fault charts.
 
-Run run_demo.py with the trace path.
-
-The demo:
-
-Creates 32KB segments for each PID
-
-Translates segment offsets into global pages
-
-Requests pages using demand paging
-
-Uses LRU replacement by default
-
-Inspect events.log to see:
-
-page_faults
-
-page_in/page_out
-
-segment_alloc
-
-tlb_hit/tlb_miss
-
-segmentation faults
-
-Run analytics.py for page fault charts.
-
-🎯 Purpose
+## 🎯 Purpose
 
 This tool is ideal for:
 
-Operating Systems labs
+  * OS labs and academic projects
+  * Teaching paging, segmentation, and demand paging
+  * Understanding real OS memory management
+  * Research with frame counts & replacement algorithms
+    It prioritizes clarity, determinism, and educational insight.
 
-College minor/major projects
+## 📎 Future Improvements
 
-Teaching paging, segmentation, and demand paging
+  * Memory compaction visualization
+  * Multi-process scheduling integration
+  * TLB replacement strategies
+  * Full GUI (Tkinter / React)
+  * Dark/light theme for visualizer
+  * Exportable event replay animation
 
-Understanding real OS memory management
+## 🙌 Acknowledgements
 
-Research experiments with frame counts & algorithms
-
-The simulator focuses on clarity, determinism, and insight, making complex OS internals easier to understand.
-
-📎 Future Improvements
-
-Memory compaction visualization
-
-Multi-process scheduling integration
-
-TLB replacement algorithms
-
-Full GUI (Tkinter / React) extension
-
-Dark/light theme in visualizer
-
-Exportable event replay animation
-
-🙌 Acknowledgements
-
-Developed as part of an Operating Systems project exploring virtual memory.
-Special focus on deterministic testing, event-driven architecture, and educational clarity.
+Developed as part of an Operating Systems project exploring virtual memory, with emphasis on deterministic testing, event-driven architecture, and educational clarity.
