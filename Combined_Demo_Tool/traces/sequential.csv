@@ -1,0 +1,7 @@
+time,pid,mode,segment,segment_offset,access_type
+1,2,segmented-paging,0,0,R
+2,2,segmented-paging,0,4096,R
+3,2,segmented-paging,0,8192,R
+4,2,segmented-paging,0,12288,R
+5,2,segmented-paging,0,16384,R
+6,2,segmented-paging,0,20480,R
