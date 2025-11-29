@@ -1,0 +1,6 @@
+﻿.venv/
+venv/
+.pytest_cache/
+__pycache__/
+events.log
+vm_tick.json
